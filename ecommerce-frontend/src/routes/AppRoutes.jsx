@@ -5,11 +5,13 @@ import PrivateRoute from '../utils/PrivateRoute';
 import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
 import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
+// import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
 
 // User pages
 import ProfilePage from '../pages/user/ProfilePage';
 import AddressListPage from '../pages/user/AddressListPage';
 import AddressFormPage from '../pages/user/AddressFormPage';
+import ChangePasswordPage from '../pages/auth/ChangePasswordPage';
 
 // Home and fallback
 import HomePage from '../pages/home/HomePage';
@@ -23,6 +25,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      {/* <Route path="/password-reset-confirm/:uid/:token" element={<ResetPasswordPage />} /> */}
 
       {/* Protected */}
       <Route
@@ -54,6 +57,14 @@ const AppRoutes = () => {
         element={
           <PrivateRoute>
             <AddressFormPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/settings/password"
+        element={
+          <PrivateRoute>
+            <ChangePasswordPage />
           </PrivateRoute>
         }
       />

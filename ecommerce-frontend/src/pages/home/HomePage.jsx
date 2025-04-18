@@ -5,10 +5,7 @@ import { getUser } from '../../utils/token';
 const HomePage = () => {
   const { currentUser } = getUser();
   const { isAuthenticated, authLoading } = useAuth();
-  // console.log(currentUser.name);
-  // console.log(currentUser.email);
-  // console.log(currentUser.id);
-
+  
   const categories = ['Electronics', 'Clothing', 'Home & Garden'];
 
   const features = [
@@ -31,9 +28,6 @@ const HomePage = () => {
 
   return (
     <div>
-      <div>
-        <h1>Welcome{currentUser ? `, ${currentUser.name}` : ''}!</h1>
-      </div>
       {/* Hero Section */}
       <section className="py-16 bg-gray-100 rounded-lg">
         <div className="container mx-auto px-4">
