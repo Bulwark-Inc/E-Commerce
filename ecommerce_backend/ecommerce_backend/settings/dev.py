@@ -1,9 +1,6 @@
 from .base import *
+from .base import BASE_DIR
 from decouple import config
-from pathlib import Path
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Django settings
 DEBUG = config('DEBUG', cast=bool, default=False)

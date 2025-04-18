@@ -5,7 +5,7 @@ import PrivateRoute from '../utils/PrivateRoute';
 import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
 import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
-// import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
+import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
 
 // User pages
 import ProfilePage from '../pages/user/ProfilePage';
@@ -25,7 +25,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      {/* <Route path="/password-reset-confirm/:uid/:token" element={<ResetPasswordPage />} /> */}
+      <Route path="/reset-password/:uid/:token" element={<ResetPasswordPage />} />
 
       {/* Protected */}
       <Route

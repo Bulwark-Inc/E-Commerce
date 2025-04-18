@@ -89,7 +89,7 @@ class PasswordResetRequestView(generics.GenericAPIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             
             # Construct reset URL (frontend should handle this URL)
-            reset_url = f"{settings.FRONTEND_URL}/api/user/auth/password-reset-confirm/{uid}/{token}/"
+            reset_url = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
             
             # Send email
             send_mail(

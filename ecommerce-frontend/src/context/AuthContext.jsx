@@ -12,6 +12,7 @@ import { generateUsername } from '../utils/username';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
@@ -60,8 +61,12 @@ export const AuthProvider = ({ children }) => {
   const handleLogin = async (credentials) => {
     setAuthError(null);
     try {
-      await authService.login(credentials);
+      const data = await authService.login(credentials);
+      const { user: userData } = data;
+
       setIsAuthenticated(true);
+      setUser(userData);
+      
       navigate('/'); // or your dashboard
     } catch (error) {
       setAuthError(error.response?.data || 'Login failed');
@@ -72,17 +77,24 @@ export const AuthProvider = ({ children }) => {
   // Logout user
   const handleLogout = () => {
     clearTokens();
+    setUser(null);
     setIsAuthenticated(false);
     navigate('/login');
   };
 
+  const handlePasswordResetConfirm = async (uid, token, password, password2) => {
+    return authService.resetPasswordConfirm(uid, token, password, password2);
+  };
+  
   const value = {
     isAuthenticated,
     authLoading,
     authError,
+    user,
     register: handleRegister,
     login: handleLogin,
     logout: handleLogout,
+    passwordResetConfirm: handlePasswordResetConfirm,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

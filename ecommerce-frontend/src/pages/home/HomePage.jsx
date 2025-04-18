@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getUser } from '../../utils/token';
 
 const HomePage = () => {
-  const { currentUser } = getUser();
+  const { user: currentUser } = useAuth();
   const { isAuthenticated, authLoading } = useAuth();
   
   const categories = ['Electronics', 'Clothing', 'Home & Garden'];

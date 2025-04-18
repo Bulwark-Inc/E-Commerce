@@ -31,6 +31,22 @@ const requestPasswordReset = async (email) => {
   return response.data;
 };
 
+const resetPasswordConfirm = async (uid, token, password, password2) => {
+  const endpoint = AUTH_ENDPOINTS.passwordResetConfirm
+    .replace('<uidb64>', uid)
+    .replace('<token>', token);
+
+  const response = await apiClient.post(endpoint,
+    {
+      password,
+      password2,
+      token,
+    }
+  );
+  
+  return response.data;
+};
+
 const refreshAccessToken = async (refreshToken) => {
   const response = await apiClient.post(AUTH_ENDPOINTS.refresh, {
     refresh: refreshToken,
@@ -47,6 +63,7 @@ export default {
   login,
   register,
   requestPasswordReset,
+  resetPasswordConfirm,
   refreshAccessToken,
   logout,
 };

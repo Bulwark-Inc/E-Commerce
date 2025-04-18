@@ -4,7 +4,7 @@ from decouple import config
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 
@@ -152,4 +152,4 @@ EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='shilohe.ai@medinn.com')
 
 # Frontend URL for password reset
-FRONTEND_URL = 'http://localhost:8000'
+FRONTEND_URL = config('FRONTEND_URL')
