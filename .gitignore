@@ -1,8 +1,6 @@
 # Python
 __pycache__/
-*.py[cod]
 *$py.class
-*.so
 .Python
 env/
 venv/
@@ -21,14 +19,18 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-.env
 
 # Django
 *.log
+*.pot
+*.py[cod]
+*.so
+staticfiles/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media/
+.env
 
 # Node.js
 node_modules/
@@ -41,6 +43,7 @@ yarn-debug.log
 # Vite
 .vite/
 dist/
+.cache/
 
 # Editors
 .idea/

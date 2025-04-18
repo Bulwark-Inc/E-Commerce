@@ -6,11 +6,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Django settings
 SECRET_KEY = config('DJANGO_SECRET_KEY')
-DEBUG = config('DEBUG')
-
-ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -52,7 +48,7 @@ ROOT_URLCONF = 'ecommerce_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,14 +61,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'
-
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -152,11 +140,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-# CORS settings
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5173",  # Vite frontend
-    "http://localhost:5173",  # Vite frontend
-]
 CORS_ALLOW_CREDENTIALS = True
 
 # EMAIL SETTINGS
