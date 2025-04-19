@@ -39,7 +39,7 @@ apiClient.interceptors.response.use(
 
       if (!refreshToken || !isTokenValid(refreshToken)) {
         clearTokens();
-        window.location.href = '/login'; // or use navigation
+        // window.location.href = '/login'; // or use navigation
         return Promise.reject(error);
       }
 
@@ -56,7 +56,7 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (refreshError) {
         clearTokens();
-        window.location.href = '/login';
+        // window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }

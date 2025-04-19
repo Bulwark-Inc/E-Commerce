@@ -1,5 +1,8 @@
 import { useState } from 'react';
+import { FaPaperPlane } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
+import Button from '../../components/ui/Button';
+
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -20,18 +23,20 @@ const ForgotPasswordPage = () => {
 
     try {
       setIsLoading(true);
-      await requestPasswordReset(email);
-      setStatus('Password reset instructions sent to your email.');
+      const res = await requestPasswordReset(email);
+      setStatus('Password reset instructions have been sent to your email.');
+      setEmail('');
     } catch (error) {
-      setFormError(error.response?.data?.detail || 'Request failed');
+      const detail = error?.response?.data?.detail;
+      setFormError(detail || 'Failed to send reset link. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-8">Reset Password</h1>
+    <div className="max-w-md mx-auto py-10">
+      <h1 className="text-3xl font-bold text-center mb-6">Forgot Password</h1>
 
       {formError && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">{formError}</div>
@@ -42,7 +47,9 @@ const ForgotPasswordPage = () => {
 
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6">
         <div className="mb-6">
-          <label htmlFor="email" className="block text-gray-700 mb-2">Email</label>
+          <label htmlFor="email" className="block text-gray-700 mb-2">
+            Enter your account email:
+          </label>
           <input
             type="email"
             name="email"
@@ -54,15 +61,15 @@ const ForgotPasswordPage = () => {
           />
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className={`w-full bg-blue-600 text-white py-2 rounded-md font-medium ${
-            isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700'
-          }`}
+          isLoading={isLoading}
+          icon={FaPaperPlane}
         >
-          {isLoading ? 'Sending...' : 'Send Reset Link'}
-        </button>
+          Send Reset Link
+        </Button>
+
       </form>
     </div>
   );

@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Input from '../../components/ui/Input';
+import Button from '../../components/ui/Button';
+import { FaKey } from 'react-icons/fa';
 
 const ResetPasswordPage = () => {
   const { uid, token } = useParams();
@@ -49,42 +52,34 @@ const ResetPasswordPage = () => {
         <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">{status}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6">
-        <div className="mb-6">
-          <label htmlFor="password" className="block text-gray-700 mb-2">New Password</label>
-          <input
-            type="password"
-            id="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 space-y-6">
+        <Input
+          label="New Password"
+          id="password"
+          type="password"
+          autoComplete="new-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-        <div className="mb-6">
-          <label htmlFor="password2" className="block text-gray-700 mb-2">Confirm Password</label>
-          <input
-            type="password"
-            id="password2"
-            autoComplete="new-password"
-            value={password2}
-            onChange={(e) => setPassword2(e.target.value)}
-            className="w-full border px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+        <Input
+          label="Confirm Password"
+          id="password2"
+          type="password"
+          autoComplete="new-password"
+          value={password2}
+          onChange={(e) => setPassword2(e.target.value)}
+          required
+        />
 
-        <button
+        <Button
           type="submit"
-          disabled={isLoading}
-          className={`w-full bg-blue-600 text-white py-2 rounded-md font-medium ${
-            isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700'
-          }`}
+          isLoading={isLoading}
+          icon={FaKey}
         >
-          {isLoading ? 'Resetting...' : 'Reset Password'}
-        </button>
+          Reset Password
+        </Button>
       </form>
     </div>
   );

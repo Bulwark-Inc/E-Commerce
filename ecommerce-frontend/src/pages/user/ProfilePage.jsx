@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../../context/UserContext';
+import Button from '../../components/ui/Button';
+import Input from '../../components/ui/Input';
+import { FaSave } from 'react-icons/fa';
 
 const ProfilePage = () => {
   const { profile, fetchUserProfile, updateUserProfile, userLoading } = useUser();
@@ -13,7 +16,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (profile) {
-      setForm({ email: profile.email, name: profile.name });
+      setForm({ email: profile.email || '', name: profile.username || '' });
     }
   }, [profile]);
 
@@ -43,35 +46,28 @@ const ProfilePage = () => {
       {error && <p className="text-red-600 mb-4">{error}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-1">Name</label>
-          <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-            required
-          />
-        </div>
+        <Input
+          label="Name"
+          id="name"
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
 
-        <div>
-          <label className="block mb-1">Email</label>
-          <input
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-            required
-          />
-        </div>
+        <Input
+          label="Email"
+          id="email"
+          name="email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
+        <Button type="submit" icon={FaSave}>
           Save Changes
-        </button>
+        </Button>
       </form>
     </div>
   );

@@ -79,9 +79,13 @@ export const AuthProvider = ({ children }) => {
     clearTokens();
     setUser(null);
     setIsAuthenticated(false);
-    navigate('/login');
+    navigate('/');
   };
 
+  const handlePasswordReset = async (email) => {
+    return authService.requestPasswordReset(email);
+  };
+  
   const handlePasswordResetConfirm = async (uid, token, password, password2) => {
     return authService.resetPasswordConfirm(uid, token, password, password2);
   };
@@ -95,6 +99,7 @@ export const AuthProvider = ({ children }) => {
     login: handleLogin,
     logout: handleLogout,
     passwordResetConfirm: handlePasswordResetConfirm,
+    requestPasswordReset: handlePasswordReset,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
