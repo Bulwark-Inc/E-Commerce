@@ -17,6 +17,11 @@ import ChangePasswordPage from '../pages/auth/ChangePasswordPage';
 import HomePage from '../pages/home/HomePage';
 import NotFoundPage from '../pages/notfound/NotFoundPage';
 
+// Product pages
+import ProductListPage from '../pages/products/ProductListPage';
+import ProductDetailPage from '../pages/products/ProductDetailPage';
+import AdminProductFormPage from '../pages/admin/AdminProductFormPage';
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -26,6 +31,28 @@ const AppRoutes = () => {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:uid/:token" element={<ResetPasswordPage />} />
+
+      {/* Add Product List Page */}
+      <Route path="/products" element={<ProductListPage />} />
+      <Route path="/products/:slug" element={<ProductDetailPage />} />
+
+      {/* Admin Pages - Protected */}
+      <Route
+        path="/admin/products/create"
+        element={
+          <PrivateRoute adminOnly={true}>
+            <AdminProductFormPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/products/edit/:slug"
+        element={
+          <PrivateRoute adminOnly={true}>
+            <AdminProductFormPage />
+          </PrivateRoute>
+        }
+      />
 
       {/* Protected */}
       <Route

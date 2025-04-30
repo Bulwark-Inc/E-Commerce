@@ -2,6 +2,8 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import { AuthProvider } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
+import { ProductProvider } from './context/ProductContext';
+import { AdminProductProvider } from './context/AdminProductContext';
 import Layout from './components/layout/Layout';
 
 function App() {
@@ -9,9 +11,13 @@ function App() {
     <Router>
       <AuthProvider>
         <UserProvider>
-          <Layout>
-            <AppRoutes />
-          </Layout>
+          <ProductProvider>
+            <AdminProductProvider>
+              <Layout>
+                <AppRoutes />
+              </Layout>
+            </AdminProductProvider>
+          </ProductProvider>
         </UserProvider>
       </AuthProvider>
     </Router>

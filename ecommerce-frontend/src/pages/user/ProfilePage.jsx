@@ -3,6 +3,7 @@ import { useUser } from '../../context/UserContext';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { FaSave } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const ProfilePage = () => {
   const { profile, fetchUserProfile, updateUserProfile, userLoading } = useUser();
@@ -69,6 +70,11 @@ const ProfilePage = () => {
           Save Changes
         </Button>
       </form>
+      <Link to="admin/products/create">
+        <Button variant="solid">
+          Add / Edit Products
+        </Button>
+      </Link>
     </div>
   );
 };

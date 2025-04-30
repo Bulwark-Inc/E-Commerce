@@ -44,7 +44,7 @@ class AddressViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         user = self.request.user
-        return Address.objects.filter(user=user)
+        return Address.objects.filter(user=user).order_by('id')
     
     @action(detail=False, methods=['get'])
     def default_shipping(self, request):

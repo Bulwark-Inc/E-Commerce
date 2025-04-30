@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FaUserPlus } from 'react-icons/fa';
-import LoginForm from '../../components/form/LoginForm';
+import LoginForm from '../../components/forms/LoginForm';
 import AuthWrapper from '../../components/layout/AuthLayout';
 import Button from '../../components/ui/Button';
 

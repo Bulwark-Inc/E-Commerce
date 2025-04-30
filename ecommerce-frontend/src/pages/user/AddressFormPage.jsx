@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
+import Input from '../../components/ui/Input';
+import Button from '../../components/ui/Button';
 
 const AddressFormPage = () => {
   const { id } = useParams();
@@ -52,24 +54,20 @@ const AddressFormPage = () => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {['line1', 'city', 'state', 'country'].map((field) => (
-          <div key={field}>
-            <label className="block mb-1 capitalize">{field}</label>
-            <input
-              name={field}
-              value={form[field]}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
-          </div>
+          <Input
+            key={field}
+            id={field}
+            name={field}
+            label={field.charAt(0).toUpperCase() + field.slice(1)}
+            value={form[field]}
+            onChange={handleChange}
+            required
+          />
         ))}
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
+        <Button type="submit">
           {isEdit ? 'Update' : 'Add'}
-        </button>
+        </Button>
       </form>
     </div>
   );

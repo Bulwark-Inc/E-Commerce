@@ -4,6 +4,7 @@ import authService from '../services/authService';
 import {
   getAccessToken,
   getRefreshToken,
+  getUser,
   isTokenValid,
   clearTokens,
 } from '../utils/token';
@@ -12,7 +13,7 @@ import { generateUsername } from '../utils/username';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
@@ -22,14 +23,17 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const access = getAccessToken();
     const refresh = getRefreshToken();
+    const { currentUser } = getUser();
 
     if (isTokenValid(access)) {
       setIsAuthenticated(true);
+      setUser(currentUser)
     } else if (isTokenValid(refresh)) {
       authService
-        .refreshAccessToken(refresh)
-        .then((data) => {
-          setIsAuthenticated(true);
+      .refreshAccessToken(refresh)
+      .then((data) => {
+        setIsAuthenticated(true);
+        setUser(currentUser)
         })
         .catch(() => {
           handleLogout();
