@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
+import AddressCard from '../../components/widgets/AddressCard';
 
 const AddressListPage = () => {
   const { addresses, fetchUserAddresses, deleteAddress, userLoading } = useUser();
@@ -23,36 +24,12 @@ const AddressListPage = () => {
         </Link>
       </div>
 
-      {addresses.length === 0 ? (
+      {Array.isArray(addresses) && addresses.length === 0 ? (
         <p>No addresses found.</p>
       ) : (
         <ul className="space-y-4">
-          {addresses.map((addr) => (
-            <li
-              key={addr.id}
-              className="border p-4 rounded flex justify-between items-start"
-            >
-              <div>
-                <p className="font-medium">{addr.line1}</p>
-                <p className="text-sm text-gray-500">
-                  {addr.city}, {addr.state}, {addr.country}
-                </p>
-              </div>
-              <div className="space-x-2">
-                <Link
-                  to={`/addresses/${addr.id}/edit`}
-                  className="text-blue-600 hover:underline"
-                >
-                  Edit
-                </Link>
-                <button
-                  onClick={() => deleteAddress(addr.id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
-              </div>
-            </li>
+          {Array.isArray(addresses) && addresses.map((addr) => (
+            <AddressCard key={addr.id} address={addr} onDelete={deleteAddress} />
           ))}
         </ul>
       )}

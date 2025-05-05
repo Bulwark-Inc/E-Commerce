@@ -46,7 +46,7 @@ export const UserProvider = ({ children }) => {
   const fetchUserAddresses = async () => {
     try {
       const data = await userService.getAddresses();
-      setAddresses(data);
+      setAddresses(Array.isArray(data) ? data : []);
     } catch (err) {
       setUserError(err.response?.data || 'Failed to load addresses');
     }
