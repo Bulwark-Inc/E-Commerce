@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '../../context/UserContext';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { FaSave } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const ProfilePage = () => {
+  const { user: currentUser } = useAuth();
   const { profile, fetchUserProfile, updateUserProfile, userLoading } = useUser();
   const [form, setForm] = useState({ email: '', name: '' });
   const [success, setSuccess] = useState(false);
@@ -70,11 +72,16 @@ const ProfilePage = () => {
           Save Changes
         </Button>
       </form>
-      <Link to="admin/products/create">
-        <Button variant="solid">
-          Add / Edit Products
-        </Button>
-      </Link>
+
+      {/* Show admin-only product management button */}
+      {currentUser.isAdmin && (
+        <div className="mt-6">
+          <Link to="/admin/products">
+            <Button variant="solid">Manage Products</Button>
+          </Link>
+        </div>
+      )}
+      
     </div>
   );
 };

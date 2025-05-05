@@ -1,6 +1,7 @@
 import ProductFilter from '../../components/filters/ProductFilter';
 import ProductGrid from '../../components/widgets/ProductGrid';
 import ProductSearchBar from '../../components/filters/ProductSearchBar';
+import Pagination from '../../components/common/Pagination';
 
 const ProductListPage = () => {
   return (
@@ -9,6 +10,7 @@ const ProductListPage = () => {
       <ProductSearchBar />
       <ProductFilter />
       <ProductGrid />
+      <Pagination />
     </div>
   );
 };

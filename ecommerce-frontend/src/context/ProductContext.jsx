@@ -1,16 +1,19 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import productService from '../services/productService';
+import { getPrimaryImage } from '../utils/productHelpers';
 
 const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
+  const pageSize = 12;
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState(null);
-  const navigate = useNavigate();
-  
+
   const [filters, setFilters] = useState({
     search: '',
     category: '',
@@ -19,6 +22,12 @@ export const ProductProvider = ({ children }) => {
     ordering: '',
     page: 1,
   });
+
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const totalPages = Math.ceil(totalProducts / pageSize); // computed value, not state
 
   const setCategoryFilterAndNavigate = (slug) => {
     setFilters((prev) => ({
@@ -29,14 +38,8 @@ export const ProductProvider = ({ children }) => {
     navigate('/products');
   };
 
-  const [totalProducts, setTotalProducts] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
   const buildQueryParams = () => {
-    const params = { ...filters, page: currentPage };
+    const params = { ...filters };
     Object.keys(params).forEach((key) => {
       if (!params[key]) delete params[key];
     });
@@ -47,10 +50,22 @@ export const ProductProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await productService.getAll(buildQueryParams());
-      setProducts(data.results || data);
-      setTotalProducts(data.count || data.length || 0);
-      setTotalPages(data.total_pages || 1);
+      
+      const enrichedProducts = data.results.map((p) => {
+        const { image, alt_text } = getPrimaryImage(p);
+        return {
+          ...p,
+          primary_image: {
+            url: image,
+            alt_text: alt_text,
+          },
+        };
+      });
+
+      setProducts(enrichedProducts);
+      setTotalProducts(data.count || data.results.length || 0);
       setError(null);
+      
     } catch (err) {
       console.error(err);
       setError('Failed to fetch products');
@@ -95,9 +110,18 @@ export const ProductProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await productService.getProductsByCategory(slug);
-      setProducts(data.results || data);
-      setTotalProducts(data.count || data.length || 0);
-      setTotalPages(data.total_pages || 1);
+      const enrichedProducts = data.results.map((p) => {
+        const { image, alt_text } = getPrimaryImage(p);
+        return {
+          ...p,
+          primary_image: {
+            url: image,
+            alt_text: alt_text,
+          },
+        };
+      });
+      setProducts(enrichedProducts);
+      setTotalProducts(data.count || data.results.length || 0);
       setError(null);
     } catch (err) {
       console.error(err);
@@ -105,33 +129,37 @@ export const ProductProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
+  // ⭐ New: Add product review (migrated from admin context)
+  const addProductReview = async (slug, reviewData) => {
+    try {
+      await productService.addReview(slug, reviewData);
+    } catch (err) {
+      console.error('Failed to submit review:', err);
+      throw err;
+    }
+  };
+  
   useEffect(() => {
     fetchProducts();
-  }, [filters, currentPage]);
+  }, [filters]);
 
   useEffect(() => {
     fetchFeaturedProducts();
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    console.log("hello");
-  }, [categories]);
-
   return (
     <ProductContext.Provider
       value={{
         products,
         featuredProducts,
-        product,             
-        fetchProduct,        
+        product,
+        fetchProduct,
         categories,
         filters,
         setFilters,
-        currentPage,
-        setCurrentPage,
         totalProducts,
         totalPages,
         loading,
@@ -140,6 +168,9 @@ export const ProductProvider = ({ children }) => {
         fetchFeaturedProducts,
         fetchCategories,
         fetchProductsByCategory,
+        setCategoryFilterAndNavigate,
+        addProductReview,
+        pageSize, // expose if needed elsewhere
       }}
     >
       {children}

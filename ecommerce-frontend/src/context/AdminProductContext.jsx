@@ -9,13 +9,34 @@ export const AdminProductProvider = ({ children }) => {
       await productService.create(productData);
     } catch (err) {
       console.error('Failed to create product:', err);
-      // You could set an error state here as well for feedback
     }
-  };  
+  };
+
   const updateProduct = (slug, productData) => productService.update(slug, productData);
   const deleteProduct = (slug) => productService.delete(slug);
   const addProductImage = (slug, formData) => productService.addImage(slug, formData);
   const addProductReview = (slug, reviewData) => productService.addReview(slug, reviewData);
+
+  // ✅ Updated: fetchProducts without page_size
+  const fetchProducts = async (page = 1, signal = null) => {
+    const params = { page };
+    const { data } = await productService.getAll(params, { signal });
+  
+    // Extract next page number if exists
+    let nextPageValue = null;
+    if (data.next) {
+      const urlParams = new URLSearchParams(data.next.split('?')[1]);
+      nextPageValue = parseInt(urlParams.get('page'), 10);
+    }
+  
+    return {
+      products: data.results,
+      total: data.count,
+      hasNextPage: !!data.next,
+      nextPage: nextPageValue,
+    };
+  };
+  
 
   return (
     <AdminProductContext.Provider
@@ -25,6 +46,7 @@ export const AdminProductProvider = ({ children }) => {
         deleteProduct,
         addProductImage,
         addProductReview,
+        fetchProducts,
       }}
     >
       {children}

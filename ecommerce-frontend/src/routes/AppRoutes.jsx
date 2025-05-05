@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import PrivateRoute from '../utils/PrivateRoute';
 
 // Auth pages
@@ -6,12 +7,12 @@ import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
 import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
+import ChangePasswordPage from '../pages/auth/ChangePasswordPage';
 
 // User pages
 import ProfilePage from '../pages/user/ProfilePage';
 import AddressListPage from '../pages/user/AddressListPage';
 import AddressFormPage from '../pages/user/AddressFormPage';
-import ChangePasswordPage from '../pages/auth/ChangePasswordPage';
 
 // Home and fallback
 import HomePage from '../pages/home/HomePage';
@@ -20,10 +21,16 @@ import NotFoundPage from '../pages/notfound/NotFoundPage';
 // Product pages
 import ProductListPage from '../pages/products/ProductListPage';
 import ProductDetailPage from '../pages/products/ProductDetailPage';
-import AdminProductFormPage from '../pages/admin/AdminProductFormPage';
 
-const AppRoutes = () => {
-  return (
+// Admin product pages
+import AdminCreateProductPage from '../pages/admin/AdminCreateProductPage';
+import AdminProductListPage from '../pages/admin/AdminProductListPage';
+import AdminEditProductPage from '../pages/admin/AdminEditProductPage';
+import AdminProductImagesPage from '../pages/admin/AdminProductImagesPage';
+
+const AppRoutes = () => (
+  <>
+    <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
     <Routes>
       {/* Public */}
       <Route path="/" element={<HomePage />} />
@@ -32,16 +39,24 @@ const AppRoutes = () => {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:uid/:token" element={<ResetPasswordPage />} />
 
-      {/* Add Product List Page */}
+      {/* Products */}
       <Route path="/products" element={<ProductListPage />} />
       <Route path="/products/:slug" element={<ProductDetailPage />} />
 
-      {/* Admin Pages - Protected */}
+      {/* Admin Routes */}
+      <Route
+        path="/admin/products"
+        element={
+          <PrivateRoute adminOnly={true}>
+            <AdminProductListPage />
+          </PrivateRoute>
+        }
+      />
       <Route
         path="/admin/products/create"
         element={
           <PrivateRoute adminOnly={true}>
-            <AdminProductFormPage />
+            <AdminCreateProductPage />
           </PrivateRoute>
         }
       />
@@ -49,12 +64,20 @@ const AppRoutes = () => {
         path="/admin/products/edit/:slug"
         element={
           <PrivateRoute adminOnly={true}>
-            <AdminProductFormPage />
+            <AdminEditProductPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/products/:slug/images"
+        element={
+          <PrivateRoute adminOnly={true}>
+            <AdminProductImagesPage />
           </PrivateRoute>
         }
       />
 
-      {/* Protected */}
+      {/* User Private */}
       <Route
         path="/profile"
         element={
@@ -99,7 +122,7 @@ const AppRoutes = () => {
       {/* Fallback */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
-  );
-};
+  </>
+);
 
 export default AppRoutes;

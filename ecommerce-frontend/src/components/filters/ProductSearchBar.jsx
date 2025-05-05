@@ -11,7 +11,6 @@ const ProductSearchBar = () => {
       search: searchQuery,
       page: 1,
     }));
-    setCurrentPage(1);
   };
 
   return (
