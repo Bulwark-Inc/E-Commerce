@@ -3,6 +3,7 @@ import AppRoutes from './routes/AppRoutes';
 import { AuthProvider } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
 import { ProductProvider } from './context/ProductContext';
+import { CartProvider } from './context/CartContext';
 import { AdminProductProvider } from './context/AdminProductContext';
 import Layout from './components/layout/Layout';
 
@@ -12,11 +13,13 @@ function App() {
       <AuthProvider>
         <UserProvider>
           <ProductProvider>
-            <AdminProductProvider>
-              <Layout>
-                <AppRoutes />
-              </Layout>
-            </AdminProductProvider>
+            <CartProvider>
+              <AdminProductProvider>
+                <Layout>
+                  <AppRoutes />
+                </Layout>
+              </AdminProductProvider>
+            </CartProvider>
           </ProductProvider>
         </UserProvider>
       </AuthProvider>

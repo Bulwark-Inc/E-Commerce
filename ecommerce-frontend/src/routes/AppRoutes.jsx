@@ -22,6 +22,9 @@ import NotFoundPage from '../pages/notfound/NotFoundPage';
 import ProductListPage from '../pages/products/ProductListPage';
 import ProductDetailPage from '../pages/products/ProductDetailPage';
 
+// Cart page
+import CartPage from '../pages/cart/CartPage';
+
 // Admin product pages
 import AdminCreateProductPage from '../pages/admin/AdminCreateProductPage';
 import AdminProductListPage from '../pages/admin/AdminProductListPage';
@@ -42,6 +45,16 @@ const AppRoutes = () => (
       {/* Products */}
       <Route path="/products" element={<ProductListPage />} />
       <Route path="/products/:slug" element={<ProductDetailPage />} />
+
+      {/* Cart */}
+      <Route
+        path="/cart"
+        element={
+          <PrivateRoute>
+            <CartPage />
+          </PrivateRoute>
+        }
+      />
 
       {/* Admin Routes */}
       <Route

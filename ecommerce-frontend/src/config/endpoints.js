@@ -1,3 +1,4 @@
+// API endpoints for Auth
 export const AUTH_ENDPOINTS = {
   login: '/api/v1/user/auth/login/',
   register: '/api/v1/user/auth/register/',
@@ -6,6 +7,7 @@ export const AUTH_ENDPOINTS = {
   passwordResetConfirm: '/api/v1/user/auth/password-reset-confirm/<uidb64>/<token>/',
 };
   
+// API endpoints for users
 export const USER_ENDPOINTS = {
   profile: '/api/v1/user/profile/',
   addresses: {
@@ -14,7 +16,7 @@ export const USER_ENDPOINTS = {
   },
 };
 
-// Build API endpoints for products
+// API endpoints for products
 export const PRODUCT_ENDPOINTS = {
   products: '/api/v1/products/',
   productDetail: (slug) => `/api/v1/products/${slug}/`,
@@ -27,3 +29,12 @@ export const PRODUCT_ENDPOINTS = {
   addProductReview: (slug) => `/api/products/${slug}/add_review/`
 };
   
+// API endpoints for carts
+export const CART_ENDPOINTS = {
+  cart: '/api/v1/cart/',
+  clear: '/api/v1/cart/clear/',
+  applyCoupon: '/api/v1/cart/apply_coupon/',
+  removeCoupon: '/api/v1/cart/remove_coupon/',
+  items: '/api/v1/cart/items/',
+  cartItemDetail: (id) => `/api/v1/cart/items/${id}/`
+};

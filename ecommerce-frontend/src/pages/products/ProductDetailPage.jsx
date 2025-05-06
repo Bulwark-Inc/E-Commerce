@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProduct } from '../../context/ProductContext';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
+import toast from 'react-hot-toast';
 import ReviewList from '../../components/widgets/ProductReviewList';
 import ReviewForm from '../../components/forms/ProductReviewForm';
 import StarRating from '../../components/widgets/StarRatingDisplay';
@@ -10,6 +12,7 @@ const ProductDetailPage = () => {
   const { slug } = useParams();
   const { product, fetchProduct, loading, error } = useProduct();
   const { isAuthenticated } = useAuth();
+  const { addItem, loading: cartLoading } = useCart();
 
   useEffect(() => {
     if (slug) fetchProduct(slug);
@@ -95,6 +98,24 @@ const ProductDetailPage = () => {
       <p className="text-xs text-gray-500 mb-8">
         Added on {new Date(product.created_at).toLocaleDateString()}
       </p>
+
+      {/* Add to Cart Button */}
+      {product.available && (
+        <button
+          onClick={async () => {
+            try {
+              await addItem(product.id, 1);
+              toast.success(`${product.name} added to cart!`);
+            } catch (err) {
+              toast.error('Could not add to cart.');
+            }
+          }}
+          disabled={cartLoading}
+          className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-5 py-2 rounded-lg shadow disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          {cartLoading ? 'Adding...' : 'Add to Cart'}
+        </button>
+      )}
 
       {/* Reviews */}
       <ReviewList reviews={product.reviews} averageRating={product.average_rating} />

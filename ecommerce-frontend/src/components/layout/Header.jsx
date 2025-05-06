@@ -9,7 +9,7 @@ const Header = () => {
   return (
     <header className="bg-gray-900 text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold">E-Shop</Link>
+        <Link to="/" className="text-2xl font-bold">MedInn</Link>
         
         <nav className="flex items-center">
           <Link to="/products" className="mx-3 hover:text-gray-300">
