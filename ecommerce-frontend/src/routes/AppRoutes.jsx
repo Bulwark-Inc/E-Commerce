@@ -13,6 +13,7 @@ import ChangePasswordPage from '../pages/auth/ChangePasswordPage';
 import ProfilePage from '../pages/user/ProfilePage';
 import AddressListPage from '../pages/user/AddressListPage';
 import AddressFormPage from '../pages/user/AddressFormPage';
+import AddressEditPage from '../pages/user/AddressEditPage';
 
 // Home and fallback
 import HomePage from '../pages/home/HomePage';
@@ -24,6 +25,15 @@ import ProductDetailPage from '../pages/products/ProductDetailPage';
 
 // Cart page
 import CartPage from '../pages/cart/CartPage';
+
+// Checkout Page
+import CheckoutPage from '../pages/checkout/CheckoutPage';
+import ConfirmOrderPage from '../pages/checkout/ConfirmOrderPage';
+
+// Order page
+import OrdersPage from '../pages/order/OrderListPage';
+import OrderDetailPage from '../pages/order/OrderDetailPage';
+import OrderConfirmationPage from '../pages/order/OrderConfirmationPage';
 
 // Admin product pages
 import AdminCreateProductPage from '../pages/admin/AdminCreateProductPage';
@@ -52,6 +62,53 @@ const AppRoutes = () => (
         element={
           <PrivateRoute>
             <CartPage />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Checkout */}
+      <Route
+        path="/checkout"
+        element={
+          <PrivateRoute>
+            <CheckoutPage />
+          </PrivateRoute>
+        }
+      />
+      
+      <Route
+        path="/confirm-order"
+        element={
+          <PrivateRoute>
+            <ConfirmOrderPage />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Order */}
+      <Route
+        path="/orders"
+        element={
+          <PrivateRoute>
+            <OrdersPage />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/order/:id"
+        element={
+          <PrivateRoute>
+            <OrderDetailPage />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/order-confirmation/:orderId/"
+        element={
+          <PrivateRoute>
+            <OrderConfirmationPage />
           </PrivateRoute>
         }
       />
@@ -119,7 +176,7 @@ const AppRoutes = () => (
         path="/addresses/:id/edit"
         element={
           <PrivateRoute>
-            <AddressFormPage />
+            <AddressEditPage />
           </PrivateRoute>
         }
       />

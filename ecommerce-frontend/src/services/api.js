@@ -9,12 +9,14 @@ import {
   isTokenValid
 } from '../utils/token';
 
+// Create base axios fetch
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
 
 // Request interceptor: attach token to every request
 apiClient.interceptors.request.use((config) => {
@@ -24,6 +26,7 @@ apiClient.interceptors.request.use((config) => {
   }
   return config;
 });
+
 
 // Response interceptor: handle token refresh on 401
 apiClient.interceptors.response.use(
@@ -39,7 +42,6 @@ apiClient.interceptors.response.use(
 
       if (!refreshToken || !isTokenValid(refreshToken)) {
         clearTokens();
-        // window.location.href = '/login'; // or use navigation
         return Promise.reject(error);
       }
 
@@ -56,7 +58,6 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (refreshError) {
         clearTokens();
-        // window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }

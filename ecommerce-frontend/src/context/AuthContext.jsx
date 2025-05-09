@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
     clearTokens();
     setUser(null);
     setIsAuthenticated(false);
-    navigate('/');
+    // navigate('/');
   };
 
   const handlePasswordReset = async (email) => {

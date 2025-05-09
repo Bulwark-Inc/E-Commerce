@@ -14,9 +14,12 @@ const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
-// Initial State
+// Initial State (safe default cart shape)
 const initialState = {
-  cart: null,
+  cart: {
+    items: [],
+    total_price: 0,
+  },
   loading: false,
   error: null,
 };
@@ -31,7 +34,11 @@ const cartReducer = (state, action) => {
     case 'CART_ERROR':
       return { ...state, error: action.payload, loading: false };
     case 'CART_CLEAR':
-      return { ...state, cart: null, loading: false };
+      return {
+        ...state,
+        cart: { items: [], total_price: 0 }, // <-- safe fallback on clear
+        loading: false,
+      };
     default:
       return state;
   }
@@ -41,17 +48,16 @@ const cartReducer = (state, action) => {
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  // Fetch cart on app load (optional)
   useEffect(() => {
     fetchCart();
   }, []);
 
-  // Actions
   const fetchCart = async () => {
     dispatch({ type: 'CART_LOADING' });
     try {
       const res = await getCart();
-      dispatch({ type: 'CART_SUCCESS', payload: res.data });
+      const cartData = res.data?.items ? res.data : { items: [], total_price: 0 };
+      dispatch({ type: 'CART_SUCCESS', payload: cartData });
     } catch (err) {
       dispatch({ type: 'CART_ERROR', payload: err.response?.data || err.message });
     }

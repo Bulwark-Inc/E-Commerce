@@ -159,5 +159,9 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='shilohe.ai@medinn.com')
 
+# Paystack settings
+PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
+PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
+
 # Frontend URL for password reset
 FRONTEND_URL = config('FRONTEND_URL')

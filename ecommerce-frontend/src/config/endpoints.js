@@ -38,3 +38,16 @@ export const CART_ENDPOINTS = {
   items: '/api/v1/cart/items/',
   cartItemDetail: (id) => `/api/v1/cart/items/${id}/`
 };
+
+// API endpoints for orders
+export const ORDER_ENDPOINTS = {
+  orders: '/api/v1/orders/',
+  orderDetail: (id) => `/api/v1/orders/${id}/`,
+  cancelOrder: (id) => `/api/v1/orders/${id}/cancel/`,
+  initializePayment: (id) => `/api/v1/orders/${id}/initialize_payment/`,
+};
+
+// API endpoints for payments
+export const PAYMENT_ENDPOINTS = {
+  verifyPayment: (reference) => `/api/v1/orders/payments/verify/?reference=${reference}`,
+};

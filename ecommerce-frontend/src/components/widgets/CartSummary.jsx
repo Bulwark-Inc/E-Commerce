@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { Loader2 } from 'lucide-react';
 
 const CartSummary = () => {
   const { cart, loading, applyCartCoupon, removeCartCoupon, clear } = useCart();
   const [couponCode, setCouponCode] = useState('');
+  const navigate = useNavigate()
 
   if (!cart) return null;
 
@@ -49,6 +51,8 @@ const CartSummary = () => {
           <button onClick={removeCartCoupon} className="text-sm text-red-500">Remove</button>
         </div>
       )}
+
+      <button onClick={() => navigate('/checkout')}>Proceed to Checkout</button>
 
       <button
         onClick={clear}

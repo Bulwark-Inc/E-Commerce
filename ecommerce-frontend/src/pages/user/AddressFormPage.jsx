@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
-import Input from '../../components/ui/Input';
-import Button from '../../components/ui/Button';
+import AddressForm from '../../components/forms/AddressForm';
+import toast from 'react-hot-toast';
 
 const AddressFormPage = () => {
   const { id } = useParams();
@@ -10,39 +10,27 @@ const AddressFormPage = () => {
   const navigate = useNavigate();
   const { addresses, fetchUserAddresses, addAddress, updateAddress } = useUser();
 
-  const [form, setForm] = useState({
-    line1: '',
-    city: '',
-    state: '',
-    country: ''
-  });
-
   useEffect(() => {
     fetchUserAddresses();
   }, []);
 
-  useEffect(() => {
-    if (isEdit) {
-      const address = addresses.find((addr) => addr.id === parseInt(id));
-      if (address) setForm(address);
-    }
-  }, [addresses, id, isEdit]);
+  const addressToEdit = isEdit
+    ? addresses.find((addr) => addr.id === parseInt(id))
+    : null;
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (formData) => {
     try {
       if (isEdit) {
-        await updateAddress(id, form);
+        await updateAddress(id, formData);
+        toast.success('Address updated successfully!');
       } else {
-        await addAddress(form);
+        await addAddress(formData);
+        toast.success('Address Created successfully!');
       }
       navigate('/addresses');
     } catch (err) {
       console.error('Address submission failed', err);
+      toast.error(err?.response?.data?.detail || 'Failed to save address');
     }
   };
 
@@ -51,24 +39,11 @@ const AddressFormPage = () => {
       <h1 className="text-2xl font-bold mb-6">
         {isEdit ? 'Edit Address' : 'Add New Address'}
       </h1>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {['line1', 'city', 'state', 'country'].map((field) => (
-          <Input
-            key={field}
-            id={field}
-            name={field}
-            label={field.charAt(0).toUpperCase() + field.slice(1)}
-            value={form[field]}
-            onChange={handleChange}
-            required
-          />
-        ))}
-
-        <Button type="submit">
-          {isEdit ? 'Update' : 'Add'}
-        </Button>
-      </form>
+      <AddressForm
+        initialData={addressToEdit}
+        onSubmit={handleSubmit}
+        isEdit={isEdit}
+      />
     </div>
   );
 };

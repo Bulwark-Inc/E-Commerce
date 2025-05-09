@@ -17,9 +17,9 @@ const CartItemCard = ({ item }) => {
       <img src={product.image} alt={product.name} className="w-20 h-20 rounded-xl object-cover" />
       <div className="flex-1">
         <h2 className="font-semibold">{product.name}</h2>
-        <p className="text-sm text-gray-500">₦{product.price}</p>
+        <p className="text-sm text-gray-500">${product.price}</p>
         {price_changed && (
-          <p className="text-sm text-red-500">⚠ Price changed since added</p>
+          <p className="text-sm text-red-500">Price changed since added</p>
         )}
         <div className="flex items-center mt-2 space-x-3">
           <button onClick={() => handleQuantityChange(quantity - 1)} className="p-2 border rounded-xl">
