@@ -23,7 +23,7 @@ const OrderConfirmationPage = () => {
 
       try {
         const res = await confirmPayment(reference);
-        setStatusMessage(`✅ Payment Verified! Order #${res.order_id} is now processing.`);
+        setStatusMessage(`Payment Verified! Order #${res.order_id} is now processing.`);
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to verify payment. Please contact support.');
       } finally {
@@ -43,7 +43,7 @@ const OrderConfirmationPage = () => {
           <>
             <div className="text-red-600 font-semibold mb-4">{error}</div>
             <button
-              onClick={() => navigate('/order')}
+              onClick={() => navigate('/orders')}
               className="text-blue-600 hover:underline"
             >
               View your orders
@@ -52,7 +52,7 @@ const OrderConfirmationPage = () => {
         ) : (
           <>
             <div className="text-green-600 text-2xl font-bold mb-4">{statusMessage}</div>
-            <Link to="/order" className="text-blue-600 hover:underline">
+            <Link to="/orders" className="text-blue-600 hover:underline">
               Go to your orders
             </Link>
           </>
