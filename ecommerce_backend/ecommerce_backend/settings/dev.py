@@ -15,7 +15,4 @@ DATABASES = {
 }
 
 # CORS settings
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5173",  # Vite frontend
-    "http://localhost:5173",  # Vite frontend
-]
+CORS_ALLOW_ALL_ORIGINS = True
