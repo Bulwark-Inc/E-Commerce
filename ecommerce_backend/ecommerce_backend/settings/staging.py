@@ -1,5 +1,4 @@
 from .base import *
-from .base import BASE_DIR
 from decouple import config
 
 # Django settings
@@ -25,14 +24,10 @@ CORS_ALLOWED_ORIGINS = [
     'https://medinn.duckdns.org',
 ]
 
-CORS_TRUSTED_ORIGINS = [
-    "https://medinn-virid.vercel.app",
-    'https://medinn.duckdns.org',
-]
+CORS_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 # SSL Settings
 SECURE_SSL_REDIRECT = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
