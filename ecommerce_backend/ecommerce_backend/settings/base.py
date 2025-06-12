@@ -24,12 +24,14 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'djoser',
+    'django_cleanup.apps.CleanupConfig',
     
     # Local apps
     'products',
     'users',
     'carts',
     'orders',
+    'blogs',
 ]
 
 MIDDLEWARE = [

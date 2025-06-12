@@ -51,3 +51,22 @@ export const ORDER_ENDPOINTS = {
 export const PAYMENT_ENDPOINTS = {
   verifyPayment: (reference) => `/api/v1/orders/payments/verify/?reference=${reference}`,
 };
+
+// API endpoints for blog
+export const BLOG_ENDPOINTS = {
+  posts: '/api/v1/blogs/posts/',
+  postDetail: (slug) => `/api/v1/blogs/posts/${slug}/`,
+  categories: '/api/v1/blogs/categories/',
+  categoryDetail: (slug) => `/api/v1/blogs/categories/${slug}/`,
+  categoryPosts: (slug) => `/api/v1/blogs/categories/${slug}/posts/`,
+  tags: '/api/v1/blogs/tags/',
+  tagDetail: (slug) => `/api/v1/blogs/tags/${slug}/`,
+  tagPosts: (slug) => `/api/v1/blogs/tags/${slug}/posts/`,
+  postComments: (slug) => `/api/v1/blogs/posts/${slug}/comments/`,
+  commentDetail: (id) => `/api/v1/blogs/comments/${id}/`,
+  featuredPosts: '/api/v1/blogs/featured-posts/',
+  popularPosts: '/api/v1/blogs/popular-posts/',
+  recentPosts: '/api/v1/blogs/recent-posts/',
+  searchPosts: (query) => `/api/v1/blogs/search-posts/?q=${encodeURIComponent(query)}`,
+  stats: '/api/v1/blogs/stats/',
+};

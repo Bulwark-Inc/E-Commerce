@@ -41,11 +41,28 @@ import AdminProductListPage from '../pages/admin/AdminProductListPage';
 import AdminEditProductPage from '../pages/admin/AdminEditProductPage';
 import AdminProductImagesPage from '../pages/admin/AdminProductImagesPage';
 
+// Blog pages
+import BlogListPage from '../pages/blogs/BlogListPage';
+import BlogDetailPage from '../pages/blogs/BlogDetailPage';
+import CategoryPostsPage from '../pages/blogs/CategoryPostsPage';
+import TagPostsPage from '../pages/blogs/TagPostsPage';
+
+// Admin blog pages
+import AdminBlogListPage from '../pages/admin/blogs/AdminBlogListPage';
+import AdminBlogCreatePage from '../pages/admin/blogs/AdminBlogCreatePage';
+import AdminBlogEditPage from '../pages/admin/blogs/AdminBlogEditPage';
+import AdminBlogCategoriesPage from '../pages/admin/blogs/AdminBlogCategoriesPage';
+import AdminBlogTagsPage from '../pages/admin/blogs/AdminBlogTagsPage';
+
+
 const AppRoutes = () => (
   <>
     <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
     <Routes>
-      {/* Public */}
+      
+      {/* ==================== Public ===================== */}
+
+      {/* Home and Auth */}
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
@@ -55,7 +72,60 @@ const AppRoutes = () => (
       {/* Products */}
       <Route path="/products" element={<ProductListPage />} />
       <Route path="/products/:slug" element={<ProductDetailPage />} />
+      
+      {/* Blog */}
+      <Route path="/blogs" element={<BlogListPage />} />
+      <Route path="/blogs/:slug" element={<BlogDetailPage />} />
+      <Route path="/blogs/category/:slug" element={<CategoryPostsPage />} />
+      <Route path="/blogs/tag/:slug" element={<TagPostsPage />} />
 
+      {/* ==========x========= Public ==========x========== */}
+
+
+      {/* ==================== Protected ===================== */}
+
+      {/* User Private */}
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <ProfilePage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/addresses"
+        element={
+          <PrivateRoute>
+            <AddressListPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/addresses/new"
+        element={
+          <PrivateRoute>
+            <AddressFormPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/addresses/:id/edit"
+        element={
+          <PrivateRoute>
+            <AddressEditPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/settings/password"
+        element={
+          <PrivateRoute>
+            <ChangePasswordPage />
+          </PrivateRoute>
+        }
+      />
+      
       {/* Cart */}
       <Route
         path="/cart"
@@ -113,7 +183,12 @@ const AppRoutes = () => (
         }
       />
 
-      {/* Admin Routes */}
+      {/* ==========x========= Protected ==========x========== */}
+
+      
+      {/* ==================== Admin ===================== */}
+      
+      {/* Admin Products */}
       <Route
         path="/admin/products"
         element={
@@ -147,50 +222,54 @@ const AppRoutes = () => (
         }
       />
 
-      {/* User Private */}
+      {/* Admin Blogs */}
       <Route
-        path="/profile"
+        path="/admin/blogs"
         element={
-          <PrivateRoute>
-            <ProfilePage />
+          <PrivateRoute adminOnly={true}>
+            <AdminBlogListPage />
           </PrivateRoute>
         }
       />
       <Route
-        path="/addresses"
+        path="/admin/blogs/create"
         element={
-          <PrivateRoute>
-            <AddressListPage />
+          <PrivateRoute adminOnly={true}>
+            <AdminBlogCreatePage />
           </PrivateRoute>
         }
       />
       <Route
-        path="/addresses/new"
+        path="/admin/blogs/edit/:slug"
         element={
-          <PrivateRoute>
-            <AddressFormPage />
+          <PrivateRoute adminOnly={true}>
+            <AdminBlogEditPage />
           </PrivateRoute>
         }
       />
       <Route
-        path="/addresses/:id/edit"
+        path="/admin/blogs/categories"
         element={
-          <PrivateRoute>
-            <AddressEditPage />
+          <PrivateRoute adminOnly={true}>
+            <AdminBlogCategoriesPage />
           </PrivateRoute>
         }
       />
       <Route
-        path="/settings/password"
+        path="/admin/blogs/tags"
         element={
-          <PrivateRoute>
-            <ChangePasswordPage />
+          <PrivateRoute adminOnly={true}>
+            <AdminBlogTagsPage />
           </PrivateRoute>
         }
       />
 
+      {/* ==========x========= Admin ==========x========== */}
+
+      
       {/* Fallback */}
       <Route path="*" element={<NotFoundPage />} />
+
     </Routes>
   </>
 );
