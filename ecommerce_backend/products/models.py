@@ -10,6 +10,8 @@ class Category(models.Model):
     image = models.ImageField(upload_to='categories/', null=True, blank=True)
     parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.SET_NULL)
     active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='categories_created', on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='categories_updated', on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -39,6 +41,8 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(default=0)
     available = models.BooleanField(default=True)
     featured = models.BooleanField(default=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='products_created', on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='products_updated', on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

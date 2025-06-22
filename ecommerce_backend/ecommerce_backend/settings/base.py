@@ -17,8 +17,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
     
-    # Third-party apps
+    # ======= Third-party apps =======
+    
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
@@ -26,13 +28,30 @@ INSTALLED_APPS = [
     'djoser',
     'django_cleanup.apps.CleanupConfig',
     
-    # Local apps
+
+    # ========= Local apps =========
+
+    # core user management
+    'accounts',
+    'profiles',
+    'permissions',
+
+    # commerce domain
     'products',
-    'users',
     'carts',
     'orders',
+    'payments',
+
+    # content and engagement
     'blogs',
+
+    # accomodation system
+    # 'housing',
+
+    # admin and dashboard
+    # 'dashboard',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -101,7 +120,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom user model
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 # Django REST Framework settings
 REST_FRAMEWORK = {
@@ -118,6 +137,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 12,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '100/day',
+        'anon': '20/day',
+    },
 }
 
 # JWT Settings

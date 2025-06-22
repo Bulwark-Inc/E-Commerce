@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Order, OrderItem, Payment
+from .models import Order, OrderItem
+from payments.models import Payment
 
 
 class OrderItemInline(admin.TabularInline):
@@ -21,7 +22,7 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ['id', 'user__email', 'tracking_number']
     readonly_fields = ['created_at', 'updated_at']
     inlines = [OrderItemInline, PaymentInline]
-    
+
     fieldsets = (
         ('Order Information', {
             'fields': ('user', 'status', 'total_price', 'shipping_price')
@@ -37,11 +38,3 @@ class OrderAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-
-
-@admin.register(Payment)
-class PaymentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'order', 'payment_method', 'amount', 'status', 'created_at']
-    list_filter = ['status', 'payment_method', 'created_at']
-    search_fields = ['order__id', 'transaction_id', 'reference']
-    readonly_fields = ['created_at', 'updated_at']

@@ -1,9 +1,8 @@
 from django.apps import AppConfig
 
-
-class UsersConfig(AppConfig):
+class PermissionsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'users'
-    
+    name = 'permissions'
+
     def ready(self):
-        import users.signals  # noqa
+        import permissions.signals

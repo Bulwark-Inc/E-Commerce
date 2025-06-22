@@ -1,25 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-
-
-class User(AbstractUser):
-    email = models.EmailField(unique=True)
-    is_verified = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
-    def __str__(self):
-        return self.email
+from django.conf import settings
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile', on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+
+    # Role intent flags
+    wants_to_be_writer = models.BooleanField(default=False)
+    wants_to_be_host = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.email}'s profile"
@@ -30,8 +21,8 @@ class Address(models.Model):
         ('billing', 'Billing'),
         ('shipping', 'Shipping'),
     )
-    
-    user = models.ForeignKey(User, related_name='addresses', on_delete=models.CASCADE)
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='addresses', on_delete=models.CASCADE)
     address_type = models.CharField(max_length=10, choices=ADDRESS_TYPE_CHOICES)
     default = models.BooleanField(default=False)
     full_name = models.CharField(max_length=100)

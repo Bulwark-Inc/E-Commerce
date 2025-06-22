@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
+from permissions.role_permissions import IsProductManager
 from .models import Category, Product, ProductImage, ProductReview
 from .serializers import (
     CategorySerializer, CategoryDetailSerializer,
@@ -26,7 +27,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [permissions.IsAdminUser()]
+            return [IsProductManager()]
         return [permissions.AllowAny()]
     
     @action(detail=True, methods=['get'])
@@ -36,8 +37,19 @@ class CategoryViewSet(viewsets.ModelViewSet):
             Q(category=category) | Q(category__parent=category),
             available=True
         )
+        page = self.paginate_queryset(products)
+        if page is not None:
+            serializer = ProductListSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = ProductListSerializer(products, many=True)
         return Response(serializer.data)
+    
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user, updated_by=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -58,7 +70,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [permissions.IsAdminUser()]
+            return [IsProductManager()]
         return [permissions.AllowAny()]
     
     @action(detail=True, methods=['post'])
@@ -75,8 +87,10 @@ class ProductViewSet(viewsets.ModelViewSet):
     def add_review(self, request, slug=None):
         product = self.get_object()
         user = request.user
-        
-        # Check if user has already reviewed this product
+
+        if user.is_staff:
+            return Response({"detail": "Staff cannot review products."}, status=status.HTTP_403_FORBIDDEN)
+
         if ProductReview.objects.filter(product=product, user=user).exists():
             return Response(
                 {"detail": "You have already reviewed this product."},
@@ -91,8 +105,13 @@ class ProductViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def featured(self, request):
-        featured_products = Product.objects.filter(featured=True, available=True)[:8]
-        serializer = ProductListSerializer(featured_products, many=True)
+        featured_products = Product.objects.filter(featured=True, available=True)
+        page = self.paginate_queryset(featured_products)
+        if page is not None:
+            serializer = ProductListSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = ProductListSerializer(featured_products[:8], many=True)
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
@@ -100,18 +119,30 @@ class ProductViewSet(viewsets.ModelViewSet):
         product_id = request.query_params.get('product_id')
         category_id = request.query_params.get('category_id')
         
-        if not (product_id and category_id):
+        try:
+            product_id = int(product_id)
+            category_id = int(category_id)
+        except (TypeError, ValueError):
             return Response(
-                {"detail": "product_id and category_id are required"},
+                {"detail": "Valid product_id and category_id are required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
         related_products = Product.objects.filter(
             category_id=category_id, 
             available=True
-        ).exclude(
-            id=product_id
-        )[:6]
-        
-        serializer = ProductListSerializer(related_products, many=True)
+        ).exclude(id=product_id)
+
+        page = self.paginate_queryset(related_products)
+        if page is not None:
+            serializer = ProductListSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = ProductListSerializer(related_products[:6], many=True)
         return Response(serializer.data)
+    
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user, updated_by=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
