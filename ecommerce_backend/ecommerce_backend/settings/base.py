@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf_spectacular',
     'django_filters',
     'corsheaders',
     'djoser',
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     # core user management
     'accounts',
     'profiles',
+    'reviews',
     'permissions',
 
     # commerce domain
@@ -44,9 +46,15 @@ INSTALLED_APPS = [
 
     # content and engagement
     'blogs',
+    'comments',
+    'ratings',
+    'notifications',
 
     # accomodation system
-    # 'housing',
+    'housing',
+    'applications',
+    # 'reviews',
+    # 'maps',
 
     # admin and dashboard
     # 'dashboard',
@@ -124,6 +132,7 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # Django REST Framework settings
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -146,6 +155,25 @@ REST_FRAMEWORK = {
         'anon': '20/day',
     },
 }
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'MedInn API',
+    'DESCRIPTION': 'API documentation for the MedInn platform.',
+    'VERSION': '1.0.0',
+    'SERVE_AUTHENTICATION': ['rest_framework_simplejwt.authentication.JWTAuthentication'],
+    'SECURITY': [{'BearerAuth': []}],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'COMPONENT_SPLIT_PATCH': True,
+    'COMPONENT_SECURITY_SCHEMES': {
+        'BearerAuth': {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
+        }
+    }
+}
+
 
 # JWT Settings
 SIMPLE_JWT = {

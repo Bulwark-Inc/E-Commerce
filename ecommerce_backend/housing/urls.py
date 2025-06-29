@@ -1,10 +1,7 @@
 from rest_framework.routers import DefaultRouter
-from django.urls import path, include
-from .views import ListingViewSet
+from .views import HousingViewSet
 
 router = DefaultRouter()
-router.register(r'listings', ListingViewSet, basename='listing')
+router.register(r'', HousingViewSet, basename='housing')
 
-urlpatterns = [
-    path('', include(router.urls)),
-]
+urlpatterns = router.urls

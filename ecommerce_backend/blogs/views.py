@@ -1,25 +1,30 @@
 from rest_framework import generics, permissions, filters, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.request import Request
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
+from django.contrib.contenttypes.models import ContentType
 
-from .models import Post, Category, Tag, Comment
+from .models import Post, Category, Tag
 from .serializers import (
     PostListSerializer, PostDetailSerializer, PostCreateUpdateSerializer,
-    CategorySerializer, TagSerializer, CommentSerializer, CommentCreateUpdateSerializer
+    CategorySerializer, TagSerializer
 )
 from .permissions import IsAuthorOrReadOnly
 from permissions.role_permissions import IsWriter
 
+# Comments integration
+from comments.views import GenericCommentListCreateView
+from comments.models import Comment
 
-# === Custom Combined Permission ===
+# Ratings integration
+from ratings.views import GenericRatingCreateUpdateView
+from ratings.models import Rating
+
+
 class IsWriterOrAdminCreatePermission(permissions.BasePermission):
-    """
-    Allow safe methods to all.
-    Allow POST to writers or admin.
-    """
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
@@ -29,7 +34,6 @@ class IsWriterOrAdminCreatePermission(permissions.BasePermission):
 
 
 class PostListCreateView(generics.ListCreateAPIView):
-    """List all published posts or create a new post (writer or admin only)"""
     permission_classes = [IsWriterOrAdminCreatePermission]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category__slug', 'tags__slug', 'featured']
@@ -48,14 +52,11 @@ class PostListCreateView(generics.ListCreateAPIView):
 
 
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """Retrieve, update or delete a post"""
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     lookup_field = 'slug'
 
     def get_queryset(self):
-        queryset = Post.objects.select_related('author', 'category').prefetch_related(
-            'tags', 'comments__author', 'comments__replies__author'
-        )
+        queryset = Post.objects.select_related('author', 'category').prefetch_related('tags')
         if not (self.request.user.is_authenticated and self.request.user.is_staff):
             queryset = queryset.filter(status='published')
         return queryset
@@ -64,7 +65,6 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
         return PostCreateUpdateSerializer if self.request.method in ['PUT', 'PATCH'] else PostDetailSerializer
 
     def perform_update(self, serializer):
-        # Allow only authors or admins to update
         instance = self.get_object()
         user = self.request.user
         if instance.author != user and not user.is_staff:
@@ -77,12 +77,26 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
             raise permissions.PermissionDenied("You don't have permission to delete this post.")
         instance.delete()
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request: Request, *args, **kwargs) -> Response:
         instance = self.get_object()
         if instance.status == 'published':
             instance.increment_views()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+# COMMENTS: Generic comment view for Post
+class PostCommentsView(GenericCommentListCreateView):
+    def get_model(self):
+        from .models import Post
+        return Post
+
+
+# RATINGS: Generic rating view for Post
+class PostRatingView(GenericRatingCreateUpdateView):
+    def get_model(self):
+        from .models import Post
+        return Post
 
 
 class CategoryListView(generics.ListAPIView):
@@ -141,53 +155,20 @@ class TagPostsView(generics.ListAPIView):
         ).select_related('author', 'category').prefetch_related('tags')
 
 
-class PostCommentsView(generics.ListCreateAPIView):
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self):
-        return Comment.objects.filter(
-            post__slug=self.kwargs['slug'],
-            is_approved=True,
-            parent__isnull=True
-        ).select_related('author').prefetch_related('replies__author').order_by('created_at')
-
-    def get_serializer_class(self):
-        return CommentCreateUpdateSerializer if self.request.method == 'POST' else CommentSerializer
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        if self.request.method == 'POST':
-            post = get_object_or_404(Post, slug=self.kwargs['slug'], status='published')
-            context['post'] = post
-        return context
-
-
-class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthorOrReadOnly]
-
-    def get_queryset(self):
-        return Comment.objects.select_related('author').prefetch_related('replies__author')
-
-    def get_serializer_class(self):
-        return CommentCreateUpdateSerializer if self.request.method in ['PUT', 'PATCH'] else CommentSerializer
-
-
+@extend_schema(responses=PostListSerializer(many=True))
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
-def featured_posts(request):
-    posts = Post.objects.filter(
-        status='published',
-        featured=True
-    ).select_related('author', 'category').prefetch_related('tags')[:6]
+def featured_posts(request: Request) -> Response:
+    posts = Post.objects.filter(status='published', featured=True)\
+        .select_related('author', 'category').prefetch_related('tags')[:6]
     serializer = PostListSerializer(posts, many=True, context={'request': request})
     return Response(serializer.data)
 
 
+@extend_schema(responses=PostListSerializer(many=True))
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
-def popular_posts(request):
+def popular_posts(request: Request) -> Response:
     posts = Post.objects.filter(status='published')\
         .select_related('author', 'category')\
         .prefetch_related('tags')\
@@ -196,9 +177,10 @@ def popular_posts(request):
     return Response(serializer.data)
 
 
+@extend_schema(responses=PostListSerializer(many=True))
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
-def recent_posts(request):
+def recent_posts(request: Request) -> Response:
     posts = Post.objects.filter(status='published')\
         .select_related('author', 'category')\
         .prefetch_related('tags')\
@@ -207,9 +189,10 @@ def recent_posts(request):
     return Response(serializer.data)
 
 
+@extend_schema(responses={'results': PostListSerializer(many=True)})
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
-def search_posts(request):
+def search_posts(request: Request) -> Response:
     query = request.GET.get('q', '')
     if not query:
         return Response({'results': []})
@@ -224,13 +207,16 @@ def search_posts(request):
     return Response({'results': serializer.data})
 
 
+@extend_schema(responses=dict)
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
-def blog_stats(request):
+def blog_stats(request: Request) -> Response:
+    post_type = ContentType.objects.get_for_model(Post)
     stats = {
         'total_posts': Post.objects.filter(status='published').count(),
         'total_categories': Category.objects.count(),
         'total_tags': Tag.objects.count(),
-        'total_comments': Comment.objects.filter(is_approved=True).count(),
+        'total_comments': Comment.objects.filter(content_type=post_type, is_approved=True).count(),
+        'total_ratings': Rating.objects.filter(content_type=post_type).count(),
     }
     return Response(stats)

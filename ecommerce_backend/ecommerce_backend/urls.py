@@ -6,9 +6,16 @@ from django.contrib.sitemaps.views import sitemap
 
 from blogs.sitemaps import PostSitemap
 
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView
+)
+
 sitemaps = {
     'posts': PostSitemap,
 }
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,15 +33,25 @@ urlpatterns = [
 
     # content and engagement
     path('api/v1/blogs/', include('blogs.urls')),
+    path('api/v1/comments/', include('comments.urls')),
+    path('api/v1/ratings/', include('ratings.urls')),
+    path('api/v1/notifications/', include('notifications.urls')),
 
     # accomodation and logistics
-    # path('api/v1/housing/', include('housing.urls')),
+    path('api/v1/housing/', include('housing.urls')),
+    path('api/v1/applications/', include('applications.urls')),
+    path('api/v1/reviews/', include('reviews.urls')),
 
     # admin
     # path('api/v1/dashboard/', include('dashboard.urls')),
 
     # others
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+
+    # DRF_Spectacular
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'), # JSON schema
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'), # Swagger UI
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'), # Redoc UI (optional)
 ]
 
 if settings.DEBUG:

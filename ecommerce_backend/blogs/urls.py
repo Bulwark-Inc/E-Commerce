@@ -7,21 +7,19 @@ urlpatterns = [
     # Posts
     path('posts/', views.PostListCreateView.as_view(), name='post_list_create'),
     path('posts/<slug:slug>/', views.PostDetailView.as_view(), name='post_detail'),
-    
+    path('posts/<slug:slug>/comments/', views.PostCommentsView.as_view(), name='post_comments'),
+    path('posts/<slug:slug>/rate/', views.PostRatingView.as_view(), name='post_rate'),
+
     # Categories
     path('categories/', views.CategoryListView.as_view(), name='category_list'),
     path('categories/<slug:slug>/', views.CategoryDetailView.as_view(), name='category_detail'),
     path('categories/<slug:slug>/posts/', views.CategoryPostsView.as_view(), name='category_posts'),
-    
+
     # Tags
     path('tags/', views.TagListView.as_view(), name='tag_list'),
     path('tags/<slug:slug>/', views.TagDetailView.as_view(), name='tag_detail'),
     path('tags/<slug:slug>/posts/', views.TagPostsView.as_view(), name='tag_posts'),
-    
-    # Comments
-    path('posts/<slug:slug>/comments/', views.PostCommentsView.as_view(), name='post_comments'),
-    path('comments/<int:pk>/', views.CommentDetailView.as_view(), name='comment_detail'),
-    
+
     # Special endpoints
     path('featured-posts/', views.featured_posts, name='featured_posts'),
     path('popular-posts/', views.popular_posts, name='popular_posts'),

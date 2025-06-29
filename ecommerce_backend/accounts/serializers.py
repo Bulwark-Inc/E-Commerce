@@ -52,7 +52,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        from permissions.models import Role, UserRole  # Import inside to avoid circular imports
+        from permissions.models import Role, UserRole  
 
         user = User.objects.create(
             username=validated_data['username'],
