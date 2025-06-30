@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/v1/housing/', include('housing.urls')),
     path('api/v1/applications/', include('applications.urls')),
     path('api/v1/reviews/', include('reviews.urls')),
+    # path('api/v1/maps/', include('maps.urls')),
 
     # admin
     # path('api/v1/dashboard/', include('dashboard.urls')),

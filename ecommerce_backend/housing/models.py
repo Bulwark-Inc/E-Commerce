@@ -1,5 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from ratings.models import Rating
+from django.db.models import Avg
 
 
 class PropertyType(models.TextChoices):
@@ -29,6 +32,22 @@ class Housing(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='housing_listings'
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def average_rating(self):
+        content_type = ContentType.objects.get_for_model(self)
+        return Rating.objects.filter(
+            content_type=content_type,
+            object_id=self.id
+        ).aggregate(avg=Avg('value'))['avg'] or 0
+
+    @property
+    def rating_count(self):
+        content_type = ContentType.objects.get_for_model(self)
+        return Rating.objects.filter(
+            content_type=content_type,
+            object_id=self.id
+        ).count()
 
     def __str__(self):
         return f"{self.title} - {self.city}"

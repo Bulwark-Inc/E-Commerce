@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     # core user management
     'accounts',
     'profiles',
-    'reviews',
     'permissions',
 
     # commerce domain
@@ -53,7 +52,7 @@ INSTALLED_APPS = [
     # accomodation system
     'housing',
     'applications',
-    # 'reviews',
+    'reviews',
     # 'maps',
 
     # admin and dashboard

@@ -41,8 +41,8 @@ class PostListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     comments_count = serializers.SerializerMethodField()
-    average_rating = serializers.FloatField(source='average_rating', read_only=True)
-    rating_count = serializers.IntegerField(source='rating_count', read_only=True)
+    average_rating = serializers.FloatField(read_only=True)
+    rating_count = serializers.IntegerField(read_only=True)
     reading_time = serializers.ReadOnlyField()
 
     class Meta:
