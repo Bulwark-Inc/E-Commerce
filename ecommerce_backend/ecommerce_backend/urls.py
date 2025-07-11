@@ -18,12 +18,10 @@ sitemaps = {
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    
     # core user management
     path('api/v1/account/', include('accounts.urls')),
     path('api/v1/profile/', include('profiles.urls')),
-    path('api/v1/permissions/', include('permissions.urls')),
+    # path('api/v1/permissions/', include('permissions.urls')),
 
     # commerce domain
     path('api/v1/products/', include('products.urls')),
@@ -33,18 +31,29 @@ urlpatterns = [
 
     # content and engagement
     path('api/v1/blogs/', include('blogs.urls')),
-    path('api/v1/comments/', include('comments.urls')),
-    path('api/v1/ratings/', include('ratings.urls')),
-    path('api/v1/notifications/', include('notifications.urls')),
+    # path('api/v1/chat/', include('blogs.urls')),
+    # path('api/v1/programs/', include('blogs.urls')),
+    # path('api/v1/courses/', include('blogs.urls')),
+    # path('api/v1/events/', include('blogs.urls')),
 
     # accomodation and logistics
     path('api/v1/housing/', include('housing.urls')),
     path('api/v1/applications/', include('applications.urls')),
-    path('api/v1/reviews/', include('reviews.urls')),
     # path('api/v1/maps/', include('maps.urls')),
 
     # admin
+    path('admin/', admin.site.urls),
     # path('api/v1/dashboard/', include('dashboard.urls')),
+    # path('api/v1/reports/', include('reports.urls')),
+
+    # Reusables
+    path('api/v1/ratings/', include('ratings.urls')),
+    path('api/v1/comments/', include('comments.urls')),
+    path('api/v1/reviews/', include('reviews.urls')),
+    path('api/v1/notifications/', include('notifications.urls')),
+    # path('api/v1/discounts/', include('discounts.urls')),
+    # path('api/v1/enrollments/', include('enrollments.urls')),
+    # path('api/v1/certificates/', include('certificates.urls')),
 
     # others
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),

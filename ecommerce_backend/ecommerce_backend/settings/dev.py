@@ -15,4 +15,7 @@ DATABASES = {
 }
 
 # CORS settings
+FRONTEND_URL = config('FRONTEND_URL')
+
+# CORS settings
 CORS_ALLOW_ALL_ORIGINS = True

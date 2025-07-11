@@ -14,7 +14,7 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'first_name', 'last_name']
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class BlogsCategorySerializer(serializers.ModelSerializer):
     posts_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -38,7 +38,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class PostListSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
-    category = CategorySerializer(read_only=True)
+    category = BlogsCategorySerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     comments_count = serializers.SerializerMethodField()
     average_rating = serializers.FloatField(read_only=True)

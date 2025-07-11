@@ -9,7 +9,6 @@ from ratings.views import GenericRatingCreateUpdateView
 from reviews.views import GenericReviewListCreateView
 
 
-
 class HousingViewSet(viewsets.ModelViewSet):
     queryset = Housing.objects.all().order_by('-created_at')
     serializer_class = HousingSerializer
@@ -20,29 +19,25 @@ class HousingViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            # Only authenticated users with approved 'host' role may manage listings
             return [permissions.IsAuthenticated(), IsHost()]
+        # Anyone can view listings
         return [permissions.AllowAny()]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
 
-# COMMENTS: Generic comment view for Housing
 class HousingCommentsView(GenericCommentListCreateView):
-    def get_model(self):
-        from .models import Housing
-        return Housing
+    model = Housing
+    lookup_field = 'pk'
 
 
-# RATINGS: Generic rating view for Housing
 class HousingRatingView(GenericRatingCreateUpdateView):
-    def get_model(self):
-        from .models import Housing
-        return Housing
+    model = Housing
+    lookup_field = 'pk'
 
 
-# REVIEWS: Generic review view for Housing
 class HousingReviewListCreateView(GenericReviewListCreateView):
-    def get_model(self):
-        from .models import Housing
-        return Housing
+    model = Housing
+    lookup_field = 'pk'

@@ -17,6 +17,8 @@ from payments.services.payment_service import (
     PaymentGatewayError,
     PaymentNotFound,
 )
+from permissions.utils import user_has_permission
+
 
 class InitializePaymentView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -25,7 +27,7 @@ class InitializePaymentView(generics.GenericAPIView):
         order_id = kwargs.get("order_id")
         order = get_object_or_404(Order, id=order_id)
 
-        if order.user != request.user and not request.user.is_staff:
+        if order.user != request.user and not user_has_permission(request.user, 'manage_orders'):
             return Response({"error": "Unauthorized"}, status=403)
 
         if order.status != 'pending':
@@ -49,7 +51,7 @@ class InitializePaymentView(generics.GenericAPIView):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class PaymentWebhookView(generics.CreateAPIView):
-    permission_classes = []
+    permission_classes = []  # public endpoint from payment gateway
 
     def create(self, request, *args, **kwargs):
         signature = request.META.get('HTTP_X_PAYSTACK_SIGNATURE')
@@ -82,7 +84,7 @@ class VerifyPaymentView(generics.RetrieveAPIView):
         if not payment:
             return Response({"error": "Payment not found"}, status=404)
 
-        if payment.order.user != request.user and not request.user.is_staff:
+        if payment.order.user != request.user and not user_has_permission(request.user, 'manage_orders'):
             return Response({"error": "Unauthorized"}, status=403)
 
         try:

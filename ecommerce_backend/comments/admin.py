@@ -17,6 +17,7 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ['author__username', 'content']
     readonly_fields = ['created_at', 'updated_at']
     list_select_related = ['author', 'parent']
+    autocomplete_fields = ['author', 'parent']
     inlines = [ReplyInline]
 
     def indented_content(self, obj):

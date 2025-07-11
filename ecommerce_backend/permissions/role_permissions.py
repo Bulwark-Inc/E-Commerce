@@ -1,48 +1,32 @@
-from rest_framework.permissions import BasePermission
-from .models import UserRole
+DEFAULT_ROLES = {
+    'admin': 'Platform Administrator',
+    'vendor': 'Product Vendor',
+    'writer': 'Upload blogs',
+    'instructor': 'Course Instructor',
+    'landlord': 'Housing Provider',
+    'tenant': 'Housing Seeker',
+    'user': 'General Authenticated User',
+    'doctor': 'Medical Doctor',
+    'student': 'Medical Student',
+}
 
-# === Global Role-Based Permissions ===
+DEFAULT_PERMISSIONS = {
+    'create_product': 'Create and manage own products',
+    'manage_orders': 'Access and process orders',
+    'create_course': 'Create and manage courses',
+    'enroll_course': 'Enroll in courses',
+    'publish_blog': 'Publish blog articles',
+    'post_housing': 'List accommodation',
+    'apply_housing': 'Apply for accommodation',
+    'access_admin_dashboard': 'Access admin dashboard'
+}
 
-class HasApprovedRole(BasePermission):
-    """
-    Base permission to check if a user has one of the approved roles.
-    Extend this class and set `required_roles`.
-    """
-    required_roles = []
-
-    def has_permission(self, request, view):
-        if not request.user or not request.user.is_authenticated:
-            return False
-
-        # Allow staff by default
-        if request.user.is_staff:
-            return True
-
-        return UserRole.objects.filter(
-            user=request.user,
-            role__name__in=self.required_roles,
-            status='approved'
-        ).exists()
-
-
-class IsProductManager(HasApprovedRole):
-    required_roles = ['product_manager']
-
-
-class IsWriter(HasApprovedRole):
-    required_roles = ['writer']
-
-
-class IsOrderManager(HasApprovedRole):
-    required_roles = ['order_manager']
-
-
-# === Object-Level Permissions ===
-
-class IsCartOwner(BasePermission):
-    """
-    Allow access only to the owner of the cart or staff.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        return obj.user == request.user or request.user.is_staff
+ROLE_PERMISSIONS_MAP = {
+    'writer': ['publish_blog'],
+    'vendor': ['create_product', 'manage_orders'],
+    'instructor': ['create_course'],
+    'student': ['enroll_course'],
+    'landlord': ['post_housing'],
+    'tenant': ['apply_housing'],
+    'admin': ['access_admin_dashboard', 'manage_orders', 'publish_blog'],
+}

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import transaction
 from orders.models import Order
 from payments.models import Payment
+from requests.exceptions import Timeout, HTTPError
 
 
 class PaymentGatewayError(Exception): pass
@@ -29,10 +30,14 @@ def initialize_transaction(payment, user_email, callback_url):
     }
     try:
         res = requests.post(url, json=payload, headers=get_headers())
-        res.raise_for_status()
+        res.raise_for_status()  # This will raise an HTTPError for 4xx or 5xx responses
         return res.json()
+    except Timeout as e:
+        raise PaymentGatewayError(f"Request timed out: {str(e)}")
+    except HTTPError as e:
+        raise PaymentGatewayError(f"HTTP error occurred: {str(e)}")
     except requests.RequestException as e:
-        raise PaymentGatewayError(str(e))
+        raise PaymentGatewayError(f"General error: {str(e)}")
 
 
 def verify_transaction(reference):
@@ -51,6 +56,9 @@ def handle_webhook_event(event, data):
     payment = Payment.objects.filter(reference=reference).first()
     if not payment:
         raise PaymentNotFound("Payment reference not found")
+    
+    if payment.status == 'completed':
+        return  # Prevent re-processing
 
     order = payment.order
 
@@ -58,6 +66,7 @@ def handle_webhook_event(event, data):
         payment.status = 'completed'
         payment.transaction_id = str(data.get('id', ''))
         payment.save()
+        
         if order.status == 'pending':
             order.status = 'processing'
             order.save()

@@ -11,6 +11,9 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # Application definition
 
 INSTALLED_APPS = [
+
+    # ======= Default apps =======
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -18,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
+    
     
     # ======= Third-party apps =======
     
@@ -45,18 +49,29 @@ INSTALLED_APPS = [
 
     # content and engagement
     'blogs',
-    'comments',
-    'ratings',
-    'notifications',
+    # 'chats',
+    # 'programs',
+    # 'events',
+    # 'courses',
 
     # accomodation system
     'housing',
     'applications',
-    'reviews',
     # 'maps',
+
+    # reusables
+    'ratings',
+    'comments',
+    'reviews',
+    'notifications',
+    # 'discounts',
+    # 'enrollments',
+    # 'certificates',
+
 
     # admin and dashboard
     # 'dashboard',
+    # 'reports',
 ]
 
 
@@ -145,14 +160,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 12,
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.AnonRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'user': '100/day',
-        'anon': '20/day',
-    },
+    # 'DEFAULT_THROTTLE_CLASSES': [
+    #     'rest_framework.throttling.UserRateThrottle',
+    #     'rest_framework.throttling.AnonRateThrottle',
+    # ],
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'user': '5000/hour',
+    #     'anon': '500/hour',
+    # },
 }
 
 
@@ -218,6 +233,3 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='shilohe.ai@medinn.com
 # Paystack settings
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
-
-# Frontend URL for password reset
-FRONTEND_URL = config('FRONTEND_URL')

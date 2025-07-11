@@ -2,43 +2,42 @@ from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.contenttypes.models import ContentType
-
 from .models import Rating
-from .serializers import RatingSerializer
+from .serializers import RatingSerializer, RatingCreateUpdateSerializer
 
 
 class GenericRatingCreateUpdateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    model = None              # Must be set in subclass
+    lookup_field = 'slug'     # Can be overridden
+
     def get_model(self):
-        raise NotImplementedError("You must implement get_model() in your subclass.")
+        assert self.model is not None, "Define `model` in subclass."
+        return self.model
 
-    def post(self, request, slug):
+    def get_object(self):
         ModelClass = self.get_model()
+        lookup_value = self.kwargs[self.lookup_field]
+        return ModelClass.objects.get(**{self.lookup_field: lookup_value})
 
+    def post(self, request, **kwargs):
         try:
-            obj = ModelClass.objects.get(slug=slug, status='published')
-        except ModelClass.DoesNotExist:
-            return Response({'detail': 'Object not found.'}, status=status.HTTP_404_NOT_FOUND)
+            target = self.get_object()
+        except self.get_model().DoesNotExist:
+            return Response({'detail': 'Target object not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        value = request.data.get('value')
-        if value is None:
-            return Response({'detail': 'Rating value is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = RatingCreateUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        value = serializer.validated_data['value']
 
-        try:
-            value = int(value)
-            if value < 1 or value > 5:
-                raise ValueError()
-        except ValueError:
-            return Response({'detail': 'Rating must be an integer between 1 and 5.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        content_type = ContentType.objects.get_for_model(obj)
+        content_type = ContentType.objects.get_for_model(target)
         rating, _ = Rating.objects.update_or_create(
-            content_type=content_type,
-            object_id=obj.id,
             user=request.user,
+            content_type=content_type,
+            object_id=target.id,
             defaults={'value': value}
         )
 
-        serializer = RatingSerializer(rating)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        read_serializer = RatingSerializer(rating)
+        return Response(read_serializer.data, status=status.HTTP_201_CREATED)

@@ -36,6 +36,7 @@ class CartItem(models.Model):
         default=1,
         validators=[MinValueValidator(1), MaxValueValidator(20)]  # Max 20 of the same item
     )
+    price_at_addition = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -61,6 +62,11 @@ class CartItem(models.Model):
         # Check if product is available for purchase
         if not self.product.available:
             raise ValidationError(f"Product {self.product.name} is not available for purchase.")
+        
+    def save(self, *args, **kwargs):
+        if not self.price_at_addition:
+            self.price_at_addition = self.product.price
+        super().save(*args, **kwargs)
 
 
 class Coupon(models.Model):

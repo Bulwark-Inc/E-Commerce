@@ -87,10 +87,18 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Post.objects.filter(slug=slug).exists():
+                counter += 1
+                slug = f"{base_slug}-{counter}"
+            self.slug = slug
+
         if self.status == 'published' and not self.published_at:
             from django.utils import timezone
             self.published_at = timezone.now()
+
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):

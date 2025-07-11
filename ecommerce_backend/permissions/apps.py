@@ -5,4 +5,5 @@ class PermissionsConfig(AppConfig):
     name = 'permissions'
 
     def ready(self):
+        # Connect signal handlers
         import permissions.signals

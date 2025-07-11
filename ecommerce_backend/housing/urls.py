@@ -1,6 +1,11 @@
 from django.urls import path, include
-from .views import HousingViewSet, HousingCommentsView, HousingRatingView, HousingReviewListCreateView
 from rest_framework.routers import DefaultRouter
+from .views import (
+    HousingViewSet,
+    HousingCommentsView,
+    HousingRatingView,
+    HousingReviewListCreateView,
+)
 
 router = DefaultRouter()
 router.register(r'', HousingViewSet, basename='housing')

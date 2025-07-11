@@ -25,11 +25,11 @@ class RoleRequestView(APIView):
         serializer = RoleRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         role = Role.objects.get(name__iexact=serializer.validated_data['role_name'])
-
         obj, created = UserRole.objects.get_or_create(user=request.user, role=role)
         if not created:
-            return Response({"detail": "Role already requested."}, status=status.HTTP_400_BAD_REQUEST)
-
+            if obj.status == 'approved':
+                return Response({"detail": "Role already approved."})
+            return Response({"detail": f"Role request already {obj.status}."}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"detail": "Role request submitted."}, status=status.HTTP_201_CREATED)
 
 class ApproveRoleView(APIView):
@@ -40,3 +40,12 @@ class ApproveRoleView(APIView):
         user_role.status = 'approved'
         user_role.save()
         return Response({"detail": f"Role '{user_role.role.name}' approved for {user_role.user.email}."})
+
+class DeclineRoleView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def patch(self, request, pk):
+        user_role = get_object_or_404(UserRole, pk=pk)
+        user_role.status = 'rejected'
+        user_role.save()
+        return Response({"detail": f"Role '{user_role.role.name}' rejected for {user_role.user.email}."})

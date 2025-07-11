@@ -1,12 +1,20 @@
 from django.contrib import admin
-from .models import Role, UserRole
+from .models import Role, CustomPermission, RolePermission, UserRole
 
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
-    list_display = ['name', 'description']
+    list_display = ('name', 'description')
+
+@admin.register(CustomPermission)
+class CustomPermissionAdmin(admin.ModelAdmin):
+    list_display = ('code', 'description')
+
+@admin.register(RolePermission)
+class RolePermissionAdmin(admin.ModelAdmin):
+    list_display = ('role', 'permission')
 
 @admin.register(UserRole)
 class UserRoleAdmin(admin.ModelAdmin):
-    list_display = ['user', 'role', 'status', 'requested_at']
-    list_filter = ['status', 'role']
-    search_fields = ['user__email']
+    list_display = ('user', 'role', 'status', 'requested_at', 'updated_at')
+    list_filter = ('status',)
+    search_fields = ('user__email', 'role__name')

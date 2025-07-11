@@ -68,7 +68,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             default_role = Role.objects.get(name__iexact='user')
             UserRole.objects.create(user=user, role=default_role, status='approved')
         except Role.DoesNotExist:
-            raise serializers.ValidationError({"detail": "Default role 'user' is not configured."})
+            raise serializers.ValidationError(f"The role '{role_name}' is not configured in the system.")
 
         return user
 
